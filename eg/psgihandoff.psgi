@@ -68,9 +68,29 @@ sub app {
             $ws->send_frame("You said $content");
         });
 
+        $ws->on_open(sub {
+            my $content = shift;
+            warn "Connection is open. Sending a greeting...";
+            $ws->send_frame("Hello WebSocket client!");
+        });
+
+        $ws->on_close(sub {
+            my $content = shift;
+            warn "Connection closed";
+        });
+
+        $ws->on_error(sub {
+            my $content = shift;
+            warn "Connection error";
+        });
+
+
         return sub {
-            warn "In our CODE ref";
+
+            warn "Beginning";
             $ws->begin();
+            warn "Done with beginning";
+
         };
     }
     else {
@@ -120,6 +140,7 @@ ws.onmessage = function (evt)
 {
 //alert(evt.data);
 var data = evt.data;
+console.log("Server says "+data);
 debug("Recieved message containing "+data);
 };
 
@@ -150,11 +171,6 @@ $("#debug").append("<p>" +  str);
 
 <h2>Debug</h2>
 <div id="debug"></div>
-
-<fieldset>
-<legend>Clock</legend>
-<div id="clock">I am a clock</div>
-</fieldset>
 
 </body>
 
